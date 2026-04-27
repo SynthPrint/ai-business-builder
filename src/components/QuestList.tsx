@@ -135,6 +135,40 @@ export function QuestList({ filterStage }: { filterStage?: string }) {
                         <h4 className="font-semibold text-sm leading-snug">{q.title}</h4>
                         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{q.description}</p>
                       </div>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            disabled={deletingId === q.id}
+                            aria-label="Delete quest"
+                          >
+                            {deletingId === q.id ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-3.5 w-3.5" />
+                            )}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete this quest?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              "{q.title}" will be permanently removed{isDone ? ", along with its completion record" : ""}. This can't be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(q.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                     <div className="mt-3">
                       {isDone ? (
@@ -157,6 +191,7 @@ export function QuestList({ filterStage }: { filterStage?: string }) {
                         </Button>
                       )}
                     </div>
+
                   </div>
                 );
               })}
