@@ -1,10 +1,22 @@
 import { useState } from "react";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { Check, Loader2, Lock, Sparkles } from "lucide-react";
+import { Check, Loader2, Lock, Sparkles, Trash2 } from "lucide-react";
 import { questsQuery, completionsQuery } from "@/lib/queries";
 import { STAGES, stageMeta } from "@/lib/game";
 import { completeQuest } from "@/lib/mutations";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +26,7 @@ export function QuestList({ filterStage }: { filterStage?: string }) {
   const { data: completions } = useSuspenseQuery(completionsQuery());
   const completedIds = new Set(completions.map((c) => c.quest_id));
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const stages = filterStage ? STAGES.filter((s) => s.key === filterStage) : STAGES;
 
@@ -33,6 +46,30 @@ export function QuestList({ filterStage }: { filterStage?: string }) {
       setBusyId(null);
     }
   };
+
+  const handleDelete = async (questId: string) => {
+    setDeletingId(questId);
+    try {
+      // Remove any completions first (no FK cascade in schema)
+      const { error: cErr } = await supabase
+        .from("quest_completions")
+        .delete()
+        .eq("quest_id", questId);
+      if (cErr) throw cErr;
+      const { error } = await supabase.from("quests").delete().eq("id", questId);
+      if (error) throw error;
+      toast.success("Quest deleted");
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["quests"] }),
+        qc.invalidateQueries({ queryKey: ["completions"] }),
+      ]);
+    } catch (e) {
+      toast.error("Could not delete quest", { description: e instanceof Error ? e.message : "" });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
 
   return (
     <div className="space-y-8">
