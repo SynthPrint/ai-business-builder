@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { PlayerHeroCard } from "@/components/PlayerHeroCard";
 import { CheckInCard } from "@/components/CheckInCard";
 import { AiBreakdownCard } from "@/components/AiBreakdownCard";
+import { AddQuestCard } from "@/components/AddQuestCard";
 import { StageProgress } from "@/components/StageProgress";
 import { RecentActivity } from "@/components/RecentActivity";
 import { playerQuery, questsQuery, completionsQuery, checkInsQuery } from "@/lib/queries";
@@ -36,6 +37,7 @@ function Index() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6 min-w-0">
+          <AddQuestCard />
           <Suspense fallback={<CardSkeleton h="h-64" />}>
             <AiBreakdownCard />
           </Suspense>
