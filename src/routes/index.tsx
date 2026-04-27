@@ -1,26 +1,57 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Suspense } from "react";
+import { PlayerHeroCard } from "@/components/PlayerHeroCard";
+import { CheckInCard } from "@/components/CheckInCard";
+import { AiBreakdownCard } from "@/components/AiBreakdownCard";
+import { StageProgress } from "@/components/StageProgress";
+import { RecentActivity } from "@/components/RecentActivity";
+import { playerQuery, questsQuery, completionsQuery, checkInsQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/")({
+  loader: ({ context: { queryClient } }) => {
+    queryClient.ensureQueryData(playerQuery());
+    queryClient.ensureQueryData(questsQuery());
+    queryClient.ensureQueryData(completionsQuery());
+    queryClient.ensureQueryData(checkInsQuery());
+  },
+  head: () => ({
+    meta: [
+      { title: "Dashboard — AI Automation Quest" },
+      { name: "description", content: "Track your XP, streaks, badges, and quest progress for your AI automation business." },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+function CardSkeleton({ h = "h-40" }: { h?: string }) {
+  return <div className={`rounded-2xl border border-border bg-card ${h} animate-pulse`} />;
 }
 
 function Index() {
-  return <PlaceholderIndex />;
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10 space-y-6">
+      <Suspense fallback={<CardSkeleton h="h-44" />}>
+        <PlayerHeroCard />
+      </Suspense>
+
+      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+        <div className="space-y-6 min-w-0">
+          <Suspense fallback={<CardSkeleton h="h-64" />}>
+            <AiBreakdownCard />
+          </Suspense>
+          <Suspense fallback={<CardSkeleton h="h-64" />}>
+            <StageProgress />
+          </Suspense>
+        </div>
+        <div className="space-y-6">
+          <Suspense fallback={<CardSkeleton h="h-56" />}>
+            <CheckInCard />
+          </Suspense>
+          <Suspense fallback={<CardSkeleton h="h-56" />}>
+            <RecentActivity />
+          </Suspense>
+        </div>
+      </div>
+    </div>
+  );
 }
