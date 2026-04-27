@@ -14,7 +14,220 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_breakdowns: {
+        Row: {
+          bottlenecks: Json
+          created_at: string
+          id: string
+          motivation: string | null
+          next_tasks: Json
+          player_id: string
+          prompt_context: string | null
+        }
+        Insert: {
+          bottlenecks?: Json
+          created_at?: string
+          id?: string
+          motivation?: string | null
+          next_tasks?: Json
+          player_id?: string
+          prompt_context?: string | null
+        }
+        Update: {
+          bottlenecks?: Json
+          created_at?: string
+          id?: string
+          motivation?: string | null
+          next_tasks?: Json
+          player_id?: string
+          prompt_context?: string | null
+        }
+        Relationships: []
+      }
+      badge_awards: {
+        Row: {
+          awarded_at: string
+          badge_key: string
+          id: string
+          player_id: string
+        }
+        Insert: {
+          awarded_at?: string
+          badge_key: string
+          id?: string
+          player_id?: string
+        }
+        Update: {
+          awarded_at?: string
+          badge_key?: string
+          id?: string
+          player_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "badge_awards_badge_key_fkey"
+            columns: ["badge_key"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
+      badges: {
+        Row: {
+          description: string
+          icon: string
+          key: string
+          name: string
+          tier: string
+        }
+        Insert: {
+          description: string
+          icon?: string
+          key: string
+          name: string
+          tier?: string
+        }
+        Update: {
+          description?: string
+          icon?: string
+          key?: string
+          name?: string
+          tier?: string
+        }
+        Relationships: []
+      }
+      check_ins: {
+        Row: {
+          bottleneck_note: string | null
+          check_in_date: string
+          created_at: string
+          efficiency_score: number | null
+          id: string
+          player_id: string
+        }
+        Insert: {
+          bottleneck_note?: string | null
+          check_in_date?: string
+          created_at?: string
+          efficiency_score?: number | null
+          id?: string
+          player_id?: string
+        }
+        Update: {
+          bottleneck_note?: string | null
+          check_in_date?: string
+          created_at?: string
+          efficiency_score?: number | null
+          id?: string
+          player_id?: string
+        }
+        Relationships: []
+      }
+      player: {
+        Row: {
+          created_at: string
+          id: string
+          last_check_in: string | null
+          level: number
+          longest_streak: number
+          streak: number
+          updated_at: string
+          xp: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_check_in?: string | null
+          level?: number
+          longest_streak?: number
+          streak?: number
+          updated_at?: string
+          xp?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_check_in?: string | null
+          level?: number
+          longest_streak?: number
+          streak?: number
+          updated_at?: string
+          xp?: number
+        }
+        Relationships: []
+      }
+      quest_completions: {
+        Row: {
+          completed_at: string
+          id: string
+          notes: string | null
+          player_id: string
+          quest_id: string
+          xp_earned: number
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          notes?: string | null
+          player_id?: string
+          quest_id: string
+          xp_earned?: number
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          notes?: string | null
+          player_id?: string
+          quest_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_completions_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quests: {
+        Row: {
+          badge_key: string | null
+          created_at: string
+          description: string
+          id: string
+          is_ai_generated: boolean
+          sort_order: number
+          stage: string
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          badge_key?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          is_ai_generated?: boolean
+          sort_order?: number
+          stage: string
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          badge_key?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          is_ai_generated?: boolean
+          sort_order?: number
+          stage?: string
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
